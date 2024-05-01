@@ -9,11 +9,13 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -58,13 +60,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Principal(posicionImagen: Int = 0, modifier: Modifier = Modifier) {
+fun Principal( modifier: Modifier = Modifier) {
     val imagenes: List<Int> = listOf(
         R.drawable.archivo1, R.drawable.archivo2, R.drawable.archivo3,
         R.drawable.archivo4, R.drawable.archivo5
     )
-    var posicionImagenActual by remember { mutableIntStateOf(posicionImagen)}
-    var imagen = imagenes[posicionImagenActual]
+    var posicionImagenActual by remember { mutableIntStateOf(0)}
 
 
     Column(
@@ -73,34 +74,33 @@ fun Principal(posicionImagen: Int = 0, modifier: Modifier = Modifier) {
             .fillMaxSize()
     ) {
         Spacer(modifier = Modifier.height(50.dp))
-        Cuadro_Foto(imagen)
+        Cuadro_Foto(imagenes, posicionImagenActual)
         Spacer(modifier = Modifier.height(50.dp))
         Cuadro_Nombre_Autor(posicionImagenActual)
         Spacer(modifier = Modifier.height(50.dp))
-        Botones { posicionImagen -> posicionImagenActual = posicionImagen }
+        Botones (
+            posicionImagenActual = posicionImagenActual,
+            posicionImagenMaxima = imagenes.size -1,
+            posicionImagenSiguiente = {
+            posicionImagen -> posicionImagenActual = posicionImagen })
         Log.d("posicionImagenActual", "posicionImagenActual $posicionImagenActual")
     }
 }
 
 @Composable
-fun Cuadro_Foto(imagen: Int) {
-    Box (
-        modifier = Modifier
-            //.padding(15.dp)
-            //.border(border = BorderStroke(width = 1.dp, Color.White))
-            .shadow(
-                elevation = 3.dp,
-                shape = RectangleShape,
-            )
-            .offset(x = 3f.dp)
-            .padding(15.dp)
+fun Cuadro_Foto(
+    imagenes: List<Int>,
+    posicionImagenActual: Int,
+    modifier: Modifier = Modifier,
 
-    ) {
-        Image(
-            painter = painterResource(id = imagen),
-            contentDescription = null,
-        )
-    }
+) {
+
+    val imagenActual = imagenes[posicionImagenActual]
+    Image(
+        painter = painterResource(id = imagenActual),
+        contentDescription = null,
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -116,26 +116,43 @@ fun Cuadro_Nombre_Autor(posicionImagenActual: Int) {
 }
 
 @Composable
-fun Botones(posicionImagen: (Int) -> Unit) {
-
-    Row {
+fun Botones(
+    modifier: Modifier = Modifier,
+    posicionImagenActual: Int,
+    posicionImagenMaxima: Int,
+    posicionImagenSiguiente: (Int) -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Button(
-
             onClick = {
-                Log.d("onClick Siguiente", "posicionImagenActual_1 $posicionImagen")
-                //val posicionImagenActual = posicionImagen
-                Log.d("onClick Siguiente", "posicionImagenActual_2 $posicionImagenActual")
-                posicionImagen.invoke(posicionImagen.invoke() + 1)
-            }) {
+                posicionImagenSiguiente (
+                    calc_posicionImagenSiguiente(posicionImagenActual, posicionImagenMaxima)
+                )
+            Log.d("Boton Anterior", "Boton Anterior $posicionImagenActual")
+            }
+        ) {
+            Text(text = "Otro Siguiente")
+        }
+        Button(
+            onClick = { posicionImagenSiguiente(posicionImagenActual + 1)
+                Log.d("Boton Siguiente", "Boton Siguiente $posicionImagenActual")
+            }
+        ) {
             Text(text = "Siguiente")
-
         }
     }
 }
 
-fun posicionImagenSiguiente(posicion: Int): Int {
+fun calc_posicionImagenSiguiente(posicion: Int, posicionMaxima: Int): Int {
     var pos: Int = posicion
-    return pos++
+    if (posicion == posicionMaxima) {
+        return  0
+    } else {
+        return ++pos
+    }
 }
 
 @Preview(
