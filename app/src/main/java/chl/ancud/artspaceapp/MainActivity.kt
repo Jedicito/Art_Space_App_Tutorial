@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
@@ -37,6 +38,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import chl.ancud.artspaceapp.ui.theme.ArtSpaceAppTheme
@@ -110,7 +112,9 @@ fun Principal( modifier: Modifier = Modifier) {
 fun Cuadro_Foto(
     imagenes: List<ImagenesConNombreyAutor>,
     posicionImagenActual: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
+        .shadow(shape = RectangleShape, elevation = 3.dp, clip = true)
+        .padding(28.dp)
 
 ) {
 
@@ -127,14 +131,20 @@ fun Cuadro_Nombre_Autor(
     nombre: String,
     autor: String,
     modifier: Modifier
+
 ) {
     Column (
         modifier = Modifier
-            .background(Color.LightGray)
+            .background(Color(0xFFecebf4))
             .padding(10.dp)
     ) {
-        Text(text = nombre)
-        Text(text = autor)
+        Text(text = nombre,
+            color = Color(0xFF515156),
+            )
+        Text(text = autor,
+            color = Color(0xFF515156),
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -148,7 +158,7 @@ fun Botones(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
         Button(
             onClick = {
@@ -156,7 +166,8 @@ fun Botones(
                     calc_posicionImagenAnterior(posicionImagenActual, posicionImagenMaxima)
                 )
             Log.d("Boton Anterior", "Boton Anterior $posicionImagenActual")
-            }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF495d92))
         ) {
             Text(text = "Anterior")
         }
@@ -166,7 +177,8 @@ fun Botones(
                     calc_posicionImagenSiguiente(posicionImagenActual, posicionImagenMaxima)
             )
                 Log.d("Boton Siguiente", "Boton Siguiente $posicionImagenActual")
-            }
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF495d92))
         ) {
             Text(text = "Siguiente")
         }
